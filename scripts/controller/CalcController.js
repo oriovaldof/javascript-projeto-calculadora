@@ -7,13 +7,50 @@ class CalcController {
 
         this._operation = [];
         this._locale = 'pt-BR';
-        this._displayCalcEl = document.querySelector("#display");
-        this._dateEl = document.querySelector("#data");
-        this._timeEl = document.querySelector("#hora");
+        this._displayCalcEl = document.querySelector('#display');
+        this._dateEl = document.querySelector('#data');
+        this._timeEl = document.querySelector('#hora');
         this._currentDate;
         this.initialize();
         this.initButtonsEvents();
         this.initKeyBoard();
+    }
+
+    pasteFromClipboard(){
+        document.addEventListener('paste',(e)=>{
+            let text = e.clipboardData.getData('Text');
+            this.displayCalc = parseFloat(text);
+        });
+    }
+    copyToClipboard(){
+
+        let input = document.createElement('input');
+
+        input.value = this.displayCalc;
+
+        document.body.appendChild(input);
+
+        input.select();
+
+        document.execCommand('Copy');
+
+        input.remove();
+    }
+    cutToClipboard(){
+
+        let input = document.createElement('input');
+
+        input.value = this.displayCalc;
+
+        document.body.appendChild(input);
+
+        input.select();
+
+        document.execCommand('Cut');
+
+        input.remove();
+
+        this.clearAll();
     }
 
     initialize() {
@@ -24,6 +61,7 @@ class CalcController {
         }, 1000);
         
         this.setLastNumberToDisplay();
+        this.pasteFromClipboard();
     }
 
     initKeyBoard(){
@@ -64,6 +102,12 @@ class CalcController {
                 case '9':
                     this.addOperation(parseInt(e.key));    
                     break;
+                case 'c':
+                    if(e.ctrlKey) this.copyToClipboard();
+                    break;
+                case 'x':
+                    if(e.ctrlKey) this.cutToClipboard();
+                    break;
             }
         });
     }
@@ -91,7 +135,7 @@ class CalcController {
     }
     
     isOperator(value){
-        return (["+","-","*","/","%"].indexOf(value) > -1);
+        return (['+','-','*','/','%'].indexOf(value) > -1);
     }
     
     setLastOperation(value){
@@ -106,7 +150,7 @@ class CalcController {
     }
 
     getResult(){
-        return eval(this._operation.join(""));
+        return eval(this._operation.join(''));
     }
 
     calc(){
@@ -210,7 +254,7 @@ class CalcController {
     }
 
     setError(){
-        this.displayCalc =  "Error";
+        this.displayCalc =  'Error';
     }
     
     execBtn(value){
@@ -223,19 +267,19 @@ class CalcController {
                 this.clearEntry();
                 break;
             case 'soma':
-                this.addOperation("+");
+                this.addOperation('+');
                 break;
             case 'subtracao':
-                this.addOperation("-");
+                this.addOperation('-');
                 break;
             case 'divisao':
-                this.addOperation("/");
+                this.addOperation('/');
                 break;
             case 'multiplicacao':
-                this.addOperation("*");
+                this.addOperation('*');
                 break;
             case 'porcento':
-                this.addOperation("%");
+                this.addOperation('%');
                 break;
             case 'igual':
                 this.calc();
@@ -263,7 +307,7 @@ class CalcController {
     }
     
     initButtonsEvents(){
-        let buttons = document.querySelectorAll("#buttons > g, #parts > g");
+        let buttons = document.querySelectorAll('#buttons > g, #parts > g');
         
         buttons.forEach((btn,index)=>{
             this.addEventListenerAll(btn,'click drag', e=>{
@@ -273,7 +317,7 @@ class CalcController {
             });
             
             this.addEventListenerAll(btn,'mouseover mouseup mousedown', e=>{
-                btn.style.cursor = "pointer";
+                btn.style.cursor = 'pointer';
             });
         });
         
@@ -281,9 +325,9 @@ class CalcController {
 
     setDisplayDateTime() {
         this.displayDate = this.currentDate.toLocaleDateString(this._locale,{
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
         });
         this.displayTime = this.currentDate.toLocaleTimeString(this._locale);
     }
